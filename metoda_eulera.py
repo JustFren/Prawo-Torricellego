@@ -64,3 +64,4 @@ h0=H
 t=100
 
 print(euler_method(t0,h0,0.0001,t,T_funnel))
+#TODO jakie przybliżenie zbiornika wybrać
