@@ -1,5 +1,6 @@
 import math
-
+import matplotlib.pyplot as plt
+import numpy as np
 def euler_method(x0,y0,epsilon,x,func):
     #x0 is the starting point,
     #y0 is the initial value
@@ -15,6 +16,37 @@ def euler_method(x0,y0,epsilon,x,func):
         x0+=epsilon
 
     return y
+def plot(list,x0,x,epsilon):
+    
+    # make data
+    #x = np.linspace(x0, x, int((x-x0)/epsilon))
+    x = [i for i in range(0,len(list))]
+    y=list
+    # plot
+    fig, ax = plt.subplots()
+    ax.plot(x,y)
+    
+    plt.show()
+def euler_method_array(x0,y0,epsilon,x,func,draw=0):
+    #x0 is the starting point,
+    #y0 is the initial value
+    #x is the target 
+    #epsilon is the precision
+    #func is the right side of a first order ODE
+    #ex.:
+    #   dy/dx = 2y => y=e^2x
+    y=y0
+    out=[]
+    out.append(y0)
+    while x0<x:
+        temp=y
+        y=y+epsilon*func(x0,y)
+        out.append(y)
+        x0+=epsilon
+
+    if draw==1:
+        plot(out,x0,x,epsilon)
+    return out
 
 def func(x,y):
     return y
@@ -47,10 +79,10 @@ print(euler_method(t0,h0,0.01,t,T_cylinder))
 #prawo Torricellego dla stożka/lejka
 
 #promień stożka
-R0=100
-R1=10
+R0=0.1
+R1=1
 #wysokość stożka
-H=30
+H=0.5
 #przyspieszenie grawitacyjne
 g=9.81
 
@@ -61,7 +93,8 @@ def T_funnel(t,h):
     return -math.sqrt(2*g*h)/((1+((R1-R0)*h)/(R0*H))**2)
 t0=0
 h0=H
-t=100
+t=10
 
-print(euler_method(t0,h0,0.0001,t,T_funnel))
+#print(euler_method(t0,h0,0.0001,t,T_funnel))
 #TODO jakie przybliżenie zbiornika wybrać
+euler_method_array(t0,h0,0.001,t,T_funnel,draw=1)
