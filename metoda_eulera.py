@@ -1,21 +1,7 @@
 import math
 import matplotlib.pyplot as plt
 import numpy as np
-def euler_method(x0,y0,epsilon,x,func):
-    #x0 is the starting point,
-    #y0 is the initial value
-    #x is the target 
-    #epsilon is the precision
-    #func is the right side of a first order ODE
-    #ex.:
-    #   dy/dx = 2y => y=e^2x
-    y=y0
-    while x0<x:
-        temp=y
-        y=y+epsilon*func(x0,y)
-        x0+=epsilon
-
-    return y
+import scipy
 def plot(list,x0,x,epsilon):
     
     # make data
@@ -27,7 +13,7 @@ def plot(list,x0,x,epsilon):
     ax.plot(x,y)
     
     plt.show()
-def euler_method_array(x0,y0,epsilon,x,func,draw=0):
+def euler_method_array(x0,x,epsilon,y0,func,draw=0):
     #x0 is the starting point,
     #y0 is the initial value
     #x is the target 
@@ -38,6 +24,7 @@ def euler_method_array(x0,y0,epsilon,x,func,draw=0):
     y=y0
     out=[]
     out.append(y0)
+    x0+=2*epsilon
     while x0<x:
         temp=y
         y=y+epsilon*func(x0,y)
@@ -48,53 +35,75 @@ def euler_method_array(x0,y0,epsilon,x,func,draw=0):
         plot(out,x0,x,epsilon)
     return out
 
-def func(x,y):
-    return y
-#przybliżenie liczby eulera
-#print(euler_method(0,1,0.00001,1,func))
 
-#======================================================
-#prawo Torricellego dla cylindra
+def calc_error(list1,list2):
+    out=[]
+    for i in range(len(list1)):
+        out.append(list1[i]-list2[i])
+    return out
+
+def compare_methods(x0,x,y0,epsilon,func):
+    euler=euler_method_array(x0,x,epsilon,y0,func)
+    lsode=scipy.integrate.odeint(func,y0,np.linspace(x0,x,len(euler)),tfirst=True)
+    err=calc_error(euler,lsode)
+    average_err=sum(err)/len(err)
+    #mean_err=err
+    #mean_err.sort()
+    #Jmean_err=mean_err[len(mean_err)//2]
+
+
+    x=np.linspace(x0,x,len(euler))
+    fig, (ax1, ax2) = plt.subplots(nrows=1,ncols=2,sharex=True)
+    #ax.set_yscale("log")
+    ax1.set_xlabel("Time (s)")
+    ax1.set_ylabel("Water level (m)")
+    ax1.plot(x,euler,label="Euler")
+    ax1.plot(x,lsode,label="ODEINT/LSODE")
+    ax1.legend()
+    ax2.set_xlabel("Time (s)")
+    ax2.set_ylabel("Error between Euler and LSODE")
+    ax2.plot(x,err)
+
+
+    #print(f"average error = {average_err}\nmean error = {mean_err}")
+
+
+    plt.show()
 
 #promień cylindra
-r=1
+r=10
 #pole powierzchni przekroju cylindra
 A=math.pi*(r**2)
 #pole powierzchni otworu wylotowego na spodzie cylindra
-a=0.01*r
+a=0.06*A
 #przyspieszenie grawitacyjne
 g=9.81
 
-def T_cylinder(t,h):
-    if h<0:
-        return 0
-    return -(a/A)*math.sqrt(2*g*h)
+def test_func(t,y):
+    return y
 
-#przybliżenie poziomu zbiornika w czasie t w zależności od poziomu startowego h0
-h0=100
-t0=0
-t=3600
-print(euler_method(t0,h0,0.01,t,T_cylinder))
-#=======================================================
-#prawo Torricellego dla stożka/lejka
-
-#promień stożka
-R0=0.1
-R1=1
-#wysokość stożka
-H=0.5
-#przyspieszenie grawitacyjne
+#dla wody mi pomiędzy [0.60,0.65]
+mi=0.62
+a=648
+A=26_300_000
 g=9.81
+h0=24.41
 
-# -v- wzięte z Eur. J. Phys. 42 (2021) 065808 (11pp) strona 4
-def T_funnel(t,h):
-    if h<0:
+def approx_raciborz(t,y):
+    if y<=0:
         return 0
-    return -math.sqrt(2*g*h)/((1+((R1-R0)*h)/(R0*H))**2)
-t0=0
-h0=H
-t=10
+    return ((-1) * mi * a * np.sqrt(2*g*y))/\
+            A*(y+h0)
 
-#print(euler_method(t0,h0,0.0001,t,T_funnel))
-#TODO jakie przybliżenie zbiornika wybrać
-euler_method_array(t0,h0,0.001,t,T_funnel,draw=1)
+#17 września 16:00 147 mln m^3
+#18 września 10:00 134 mln m^3
+#18 września 17:00 128 mln m^3
+#19 września 10:00 115 mln m^3
+#23 września --:-- 57  mln m^3
+#24 września 16:00 21  mln m^3
+#25 września 10:00 17  mln m^3
+#26 września 10:00 12  mln m^3
+#27 września 16:00 10  mln m^3
+#29 września 08:00 0       m^3  
+#TODO zmienić objętości na wartości h
+#compare_methods(0,18*3600,)
