@@ -66,10 +66,8 @@ def compare_methods(x0,x,y0,epsilon,func):
 
 
     #print(f"average error = {average_err}\nmean error = {mean_err}")
-
-
-    plt.show()
-
+    #plt.show()
+    return [euler,lsode]
 #promień cylindra
 r=10
 #pole powierzchni przekroju cylindra
@@ -85,25 +83,44 @@ def test_func(t,y):
 #dla wody mi pomiędzy [0.60,0.65]
 mi=0.62
 a=648
-A=26_300_000
+A0=26_300_000
 g=9.81
 h0=24.41
+Htotal=35.41
+Vwirt=A0*(h0**3)/(3*(Htotal**2))
+def A(h):
+    return A0 * (h/Htotal)**2
+
 
 def approx_raciborz(t,y):
     if y<=0:
         return 0
     return ((-1) * mi * a * np.sqrt(2*g*y))/\
-            A*(y+h0)
+            A(y+h0)
 
-#17 września 16:00 147 mln m^3
-#18 września 10:00 134 mln m^3
-#18 września 17:00 128 mln m^3
-#19 września 10:00 115 mln m^3
-#23 września --:-- 57  mln m^3
-#24 września 16:00 21  mln m^3
-#25 września 10:00 17  mln m^3
-#26 września 10:00 12  mln m^3
-#27 września 16:00 10  mln m^3
-#29 września 08:00 0       m^3  
+
+def volume_to_height(V):
+    return math.cbrt(3*(V+Vwirt)*(Htotal**2)/A0)-24.41
+
+testlist=[147_000_000,134_000_000,128_000_000,115_000_000,57_000_000,21_000_000,17_000_000,12_000_000,10_000_000,0]
+
+for i in range(len(testlist)):
+    print(volume_to_height(testlist[i]))
+
+
+
+
+wynik=compare_methods(0,748_800,147_000_000,0.01,approx_raciborz)
+
+
+#17 września 16:00 147 mln m^3  8h
+#18 września 10:00 134 mln m^3 24h
+#18 września 17:00 128 mln m^3 24h
+#19 września 10:00 115 mln m^3 24h
+#23 września --:-- 57  mln m^3 24h
+#24 września 16:00 21  mln m^3 24h
+#25 września 10:00 17  mln m^3 24h
+#26 września 10:00 12  mln m^3 24h
+#27 września 16:00 10  mln m^3 24h
+#29 września 08:00 0       m^3  8h
 #TODO zmienić objętości na wartości h
-#compare_methods(0,18*3600,)
