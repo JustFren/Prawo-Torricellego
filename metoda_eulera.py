@@ -2,8 +2,7 @@ import math
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy
-def plot(list,x0,x,epsilon):
-    
+def plot(list):
     # make data
     #x = np.linspace(x0, x, int((x-x0)/epsilon))
     x = [i for i in range(0,len(list))]
@@ -11,8 +10,8 @@ def plot(list,x0,x,epsilon):
     # plot
     fig, ax = plt.subplots()
     ax.plot(x,y)
-    
     plt.show()
+
 def euler_method_array(x0,x,epsilon,y0,func,draw=0):
     #x0 is the starting point,
     #y0 is the initial value
@@ -28,6 +27,7 @@ def euler_method_array(x0,x,epsilon,y0,func,draw=0):
     while x0<x:
         temp=y
         y=y+epsilon*func(x0,y)
+        #print(epsilon*func(x0,y))
         out.append(y)
         x0+=epsilon
 
@@ -66,7 +66,7 @@ def compare_methods(x0,x,y0,epsilon,func):
 
 
     #print(f"average error = {average_err}\nmean error = {mean_err}")
-    #plt.show()
+    plt.show()
     return [euler,lsode]
 #promień cylindra
 r=10
@@ -82,7 +82,7 @@ def test_func(t,y):
 
 #dla wody mi pomiędzy [0.60,0.65]
 mi=0.62
-a=648
+a=612 # 648
 A0=26_300_000
 g=9.81
 h0=24.41
@@ -91,12 +91,12 @@ Vwirt=A0*(h0**3)/(3*(Htotal**2))
 def A(h):
     return A0 * (h/Htotal)**2
 
-
+wsp=(-1)*mi*a
+G=2*g
 def approx_raciborz(t,y):
     if y<=0:
         return 0
-    return ((-1) * mi * a * np.sqrt(2*g*y))/\
-            A(y+h0)
+    return (wsp * np.sqrt(G*y))/A(y+h0)
 
 
 def volume_to_height(V):
@@ -110,8 +110,11 @@ for i in range(len(testlist)):
 
 
 
-wynik=compare_methods(0,748_800,147_000_000,0.01,approx_raciborz)
+wynik=compare_methods(0,64_000,volume_to_height(147_000_000),1,approx_raciborz)
 
+for i in range(len(testlist)):
+    testlist[i]=volume_to_height(testlist[i])
+plot(testlist)
 
 #17 września 16:00 147 mln m^3  8h
 #18 września 10:00 134 mln m^3 24h
