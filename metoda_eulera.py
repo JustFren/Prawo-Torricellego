@@ -115,15 +115,19 @@ wynik=compare_methods(0,64_000,volume_to_height(147_000_000),1,approx_raciborz)
 for i in range(len(testlist)):
     testlist[i]=volume_to_height(testlist[i])
 plot(testlist)
-
-#17 września 16:00 147 mln m^3  8h
-#18 września 10:00 134 mln m^3 24h
-#18 września 17:00 128 mln m^3 24h
-#19 września 10:00 115 mln m^3 24h
-#23 września --:-- 57  mln m^3 24h
-#24 września 16:00 21  mln m^3 24h
-#25 września 10:00 17  mln m^3 24h
-#26 września 10:00 12  mln m^3 24h
-#27 września 16:00 10  mln m^3 24h
-#29 września 08:00 0       m^3  8h
+"""
+* 17 września o 16:00 poziom wody wynosił ok. 147 mln m³,
+* 18 września o 10.00 poziom wody wynosił ok. 134 mln m³,
+* 19 września o 10.00 poziom wody wynosił już ok. 115mln m³ (ok. 65% pojemności zbiornika),
+* 20 września o 11:00 poziom wody wynosił ok. 102 mln m³,
+* 21 września o 11:00 poziom wody wynosił ok. 85 mln m³,
+* 22 września o 11:00 poziom wody wynosił ok. 63 mln m³,
+* 23 września o 10:00 poziom wody wynosił ok. 44 mln m³,
+* 24 września o 10:00 poziom wody wynosił ok. 24 mln m³,
+* 25 września o 10:00 poziom wody wynosił ok. 17 mln m³,
+* 26 września o 10:00 poziom wody wynosił ok. 12 mln m³,
+* 27 września o 10:00 poziom wody wynosił ok. 8 mln m³,
+* 28 września o 10:00 poziom wody wynosił ok. 4 mln m³,
+* 29 września 2024 ok godziny 8 zakończyła się praca zbiornika Racibórz Dolny, poziom wody wynosi 0m³.
+"""
 #TODO zmienić objętości na wartości h
