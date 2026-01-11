@@ -176,3 +176,64 @@ def approx_raciborz_redundant(t,h):
     if h<=0:
         return 0
     return (Q_in(t)-Q_out(h))/A(h+h0)
+
+
+def model_prognostyczny(times, volumes_imgw, q_in_list, epsilon=1):
+
+    V_max = 185000000
+    V_80 = 0.8 * V_max
+    Q_safe = 1210.0
+    
+    q_in_func = CubicSpline(times, q_in_list)
+    
+
+    t_start = times[0]
+    t_end = times[-1]
+    total_seconds = t_end - t_start
+    
+    t_sim = np.linspace(t_start, t_end, total_seconds + 1)
+    v_sim = np.zeros(len(t_sim))
+    
+    v_sim[0] = volumes_imgw[0] * 1e6 
+    
+    for i in range(total_seconds):
+        t_teraz = t_sim[i]
+        v_teraz = v_sim[i]
+        q_in = q_in_func(t_teraz)
+        
+        h_teraz = volume_to_height(v_teraz)
+        if h_teraz > 0:
+            q_max = wsp * np.sqrt(2 * g * h_teraz)
+        else:
+            q_max = 0
+
+        if v_teraz < V_80:
+            if v_teraz > 0:
+                q_out = Q_safe
+            else:
+                q_out = q_in
+        else:
+            q_out = max(Q_safe, q_in)
+        
+        q_out = min(q_out, q_max)
+            
+        dv = (q_in - q_out) * epsilon
+        v_sim[i+1] = max(0, v_teraz + dv)
+    
+
+    plt.plot(t_sim / 3600, v_sim / 1e6, color='blue', linewidth=2, label="Prognoza modelu")
+    
+    plt.plot(np.array(times) / 3600, volumes_imgw, "^", color='red', label="Dane rzeczywiste IMGW", markersize=10)
+
+
+    plt.axhline(y=148, color='orange', linestyle=':', label="Próg 80% (148 mln m³)")
+    plt.fill_between(t_sim / 3600, 0, v_sim / 1e6, color='blue', alpha=0.1)
+
+    plt.title("Symulacja objętości zbiornika", fontsize=14)
+    plt.xlabel("Czas od startu [h]", fontsize=12)
+    plt.ylabel("Objętość [$mln/m^3$]", fontsize=12)
+    plt.grid(True, alpha=0.3)
+    plt.legend()
+    plt.show()
+
+model_prognostyczny(times, volumes, inflow, 1)
