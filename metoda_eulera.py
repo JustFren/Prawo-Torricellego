@@ -49,7 +49,8 @@ times=[0,64_800,151_200,241_200,327_600,414_000,583_200,669_600,756_000,842_400,
 volumes=[147,134,115,102,85,63,44,24,17,12,8,4]
 def compare_methods(x0,x,y0,epsilon,func,draw=1):
     euler=euler_method_array(x0,x,epsilon,y0,func)
-    lsode=scipy.integrate.odeint(func,y0,np.linspace(x0,x,len(euler)),tfirst=True)
+    t_space = np.linspace(x0, x, len(euler))
+    lsode=scipy.integrate.odeint(func,y0,t_space,tfirst=True)
     
     if draw==0:
         return [euler,lsode]
@@ -62,16 +63,16 @@ def compare_methods(x0,x,y0,epsilon,func,draw=1):
     x=np.linspace(x0,x,len(euler))
     fig, (ax1, ax2) = plt.subplots(nrows=1,ncols=2,sharex=True)
     #ax.set_yscale("log")
-    ax1.set_xlabel("Time (s)")
+    ax1.set_xlabel("Time (h)")
     ax1.set_ylabel("Water level (m)")
-    ax1.plot(x,euler,label="Euler")
-    ax1.plot(x,lsode,label="ODEINT/LSODE")
+    ax1.plot(t_space/3600,euler,label="Euler", linewidth = 3.5)
+    ax1.plot(t_space/3600,lsode,label="ODEINT/LSODE", color = "orange", linewidth=1)
     
-    ax1.plot(times,obj,"^",label="Real data")
+    ax1.plot(np.array(times)/3600,obj,"^",label="Real data", color = "red")
     ax1.legend()
-    ax2.set_xlabel("Time (s)")
+    ax2.set_xlabel("Time (h)")
     ax2.set_ylabel("Error between Euler and LSODE (Euler-LSODE)")
-    ax2.plot(x,err)
+    ax2.plot(t_space/3600,err)
 
 
     #print(f"average error = {average_err}\nmean error = {mean_err}")
@@ -94,16 +95,16 @@ def compare_methods_mult(times,volumes,epsilon,func):
 
     fig, ax1 = plt.subplots(nrows=1,ncols=1,sharex=True)
     #ax.set_yscale("log")
-    ax1.set_xlabel("Time (s)")
+    ax1.set_xlabel("Time (h)")
     ax1.set_ylabel("Water level (m)")
     #ax2.set_xlabel("Time (s)")
     #ax2.set_ylabel("Error between Euler and LSODE (Euler-LSODE)")
     for i in range(len(times)-1):
         x=np.linspace(times[i],times[i+1],len(euler[i]))
-        ax1.plot(x,euler[i],label="Euler",color="blue")
-        #ax1.plot(x,lsode[0][i],label="ODEINT/LSODE")
+        ax1.plot(x/3600,euler[i],label="Euler",color="blue")
+        #ax1.plot(x/3600,lsode[0][i],label="ODEINT/LSODE")
     
-    ax1.plot(times,obj,"^",label="Real data",color="red")
+    ax1.plot(np.array(times) / 3600,obj,"^",label="Real data",color="red")
     #ax1.legend()
 
     #ax2.plot(x,err)
