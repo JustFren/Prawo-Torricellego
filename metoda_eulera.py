@@ -221,17 +221,16 @@ def model_prognostyczny(times, volumes_imgw, q_in_list, epsilon=1):
         v_sim[i+1] = max(0, v_teraz + dv)
     
 
-    plt.plot(t_sim / 3600, v_sim / 1e6, color='blue', linewidth=2, label="Prognoza modelu")
+    plt.plot(t_sim / 3600, v_sim / 1e6, color='blue', linewidth=2, label="Model Forecast")
     
-    plt.plot(np.array(times) / 3600, volumes_imgw, "^", color='red', label="Dane rzeczywiste IMGW", markersize=10)
+    plt.plot(np.array(times) / 3600, volumes_imgw, "^", color='red', label="Real data", markersize=10)
 
 
-    plt.axhline(y=148, color='orange', linestyle=':', label="Próg 80% (148 mln m³)")
+    plt.axhline(y=148, color='orange', linestyle=':', label="80% Threshold (148 mln m³)")
     plt.fill_between(t_sim / 3600, 0, v_sim / 1e6, color='blue', alpha=0.1)
 
-    plt.title("Symulacja objętości zbiornika", fontsize=14)
-    plt.xlabel("Czas od startu [h]", fontsize=12)
-    plt.ylabel("Objętość [$mln/m^3$]", fontsize=12)
+    plt.xlabel("Time (h)", fontsize=12)
+    plt.ylabel("Volume (mln m³)", fontsize=12)
     plt.grid(True, alpha=0.3)
     plt.legend()
     plt.show()
