@@ -5,8 +5,6 @@ from scipy.interpolate import CubicSpline
 from approximations_of_a import approximated_a_10
 
 def plot(list):
-    # make data
-    #x = np.linspace(x0, x, int((x-x0)/epsilon))
     x = [i for i in range(0,len(list))]
     y=list
     # plot
@@ -15,13 +13,6 @@ def plot(list):
     plt.show()
 
 def euler_method_array(x0,x,epsilon,y0,func,draw=0):
-    #x0 is the starting point,
-    #y0 is the initial value
-    #x is the target 
-    #epsilon is the precision
-    #func is the right side of a first order ODE
-    #ex.:
-    #   dy/dx = 2y => y=e^2x
     y=y0
     out=[]
     out.append(y0)
@@ -29,14 +20,12 @@ def euler_method_array(x0,x,epsilon,y0,func,draw=0):
     while x0<x:
         temp=y
         y=y+epsilon*func(x0,y)
-        #print(epsilon*func(x0,y))
         out.append(y)
         x0+=epsilon
 
     if draw==1:
         plot(out,x0,x,epsilon)
     return out
-
 
 def calc_error(list1,list2):
     out=[]
@@ -117,7 +106,7 @@ def compare_methods_mult(times,volumes,epsilon,func):
 
 #dla wody mi pomiędzy [0.60,0.65]
 mi=0.62
-a=612 # 648
+a=612
 A0=26_300_000
 g=9.81
 h0=24.41
